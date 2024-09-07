@@ -18,6 +18,9 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
+application.properties
+src/main/resources/application.properties
+
 .idea
 *.iws
 *.iml
@@ -35,3 +38,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# macOS files
+.DS_Store
