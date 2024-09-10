@@ -8,8 +8,10 @@ import org.springframework.stereotype.Service;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 // Service Class 생성
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OauthService {
@@ -19,10 +21,12 @@ public class OauthService {
     public void request(SocialLoginType socialLoginType) {
         SocialOauth socialOauth = this.findSocialOauthByType(socialLoginType);
         String redirectURL = socialOauth.getOauthRedirectURL();
+
+        log.info("리디렉션 URL: {}", redirectURL); // 로그 추가
         try {
             response.sendRedirect(redirectURL);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("리디렉션 중 오류 발생: ", e);
         }
     }
 
