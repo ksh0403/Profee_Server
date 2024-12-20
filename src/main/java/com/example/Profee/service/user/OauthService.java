@@ -12,7 +12,6 @@ import com.google.gson.JsonParser;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -25,9 +24,6 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * OauthService는 ~~
- */
 @Service
 @RequiredArgsConstructor
 public class OauthService {
@@ -78,6 +74,8 @@ public class OauthService {
         // 3. 액세스 토큰을 사용해 사용자 정보 요청
         String userInfo = getUserInfo(socialLoginType, accessToken);
 
+        System.out.println("userinfo" + userInfo);
+
         // 4. 사용자 정보를 파싱하여 User 객체 생성
         User user = parseUserInfo(userInfo, socialLoginType, accessToken);
 
@@ -115,6 +113,7 @@ public class OauthService {
     public String googleApiCall(String accessToken) {
         try {
             // accessToken을 URL 인코딩
+            logger.info("Starting Google API call with access token: {}", accessToken);
             String encodedAccessToken = URLEncoder.encode(accessToken, "UTF-8");
             logger.debug("Encoded access token: {}", encodedAccessToken);
 
