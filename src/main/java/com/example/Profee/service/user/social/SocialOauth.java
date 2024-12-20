@@ -1,4 +1,4 @@
-package com.example.Profee.service.social;
+package com.example.Profee.service.user.social;
 
 import com.example.Profee.helper.constants.SocialLoginType;
 

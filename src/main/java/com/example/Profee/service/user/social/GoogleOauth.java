@@ -1,4 +1,4 @@
-package com.example.Profee.service.social;
+package com.example.Profee.service.user.social;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,10 +62,6 @@ public class GoogleOauth implements SocialOauth {
                 restTemplate.postForEntity(GOOGLE_SNS_TOKEN_BASE_URL, params, String.class);
 
         if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            // 콘솔에 받은 토큰 출력
-            String tokenResponse = responseEntity.getBody();
-            System.out.println("Received Access Token: " + tokenResponse);
-
             return responseEntity.getBody();
         }
         return "구글 로그인 요청 처리 실패";
@@ -105,11 +101,7 @@ public class GoogleOauth implements SocialOauth {
             }
 
             if (conn.getResponseCode() == 200) {
-                // 콘솔에 받은 토큰 출력
-                String tokenResponse = sb.toString();
-                System.out.println("Received Access Token: " + tokenResponse);
-
-                return tokenResponse;
+                return sb.toString();
             }
             return "구글 로그인 요청 처리 실패";
         } catch (IOException e) {
