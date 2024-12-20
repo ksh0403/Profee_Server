@@ -1,29 +1,22 @@
 package com.example.Profee.controller.user;
 
-import com.example.Profee.dto.response.UserResponse;
+import com.example.Profee.entity.User;
+import com.example.Profee.helper.constants.SocialLoginType;
+import com.example.Profee.service.user.OauthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import com.example.Profee.helper.constants.SocialLoginType;
-import com.example.Profee.service.user.OauthService;
-import com.example.Profee.entity.User;  // 엔티티 추가
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-/**
- * OauthController는 ~~
- */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/auth")
 @Slf4j
 @Tag(name = "OAuth", description = "소셜 로그인 인증을 시작하고 콜백을 처리하는 API를 제공합니다.")
 public class OauthController {
-
     private final OauthService oauthService;
 
     @Operation(
@@ -50,27 +43,20 @@ public class OauthController {
                     @Parameter(name = "code", description = "소셜 로그인 API 서버로부터 받은 인증 코드.", required = true)
             })
     @GetMapping(value = "/{socialLoginType}/callback")
-    public ResponseEntity<?> callback(
+    public ResponseEntity<String> callback(
             @PathVariable(name = "socialLoginType") SocialLoginType socialLoginType,
-            @RequestParam(name = "code") String code,
-            HttpSession session) {
-
+            @RequestParam(name = "code") String code) {
         log.info(">> 소셜 로그인 API 서버로부터 받은 code :: {}", code);
 
-        // 액세스 토큰을 통해 사용자 정보를 받아온 후 저장
-        User user = oauthService.requestAccessTokenAndSaveUser(socialLoginType, code);
+        // 액세스 토큰을 받아온 후, 사용자 정보를 DB에 저장
+        User user = oauthService.requestAccessTokenAndSaveUser(socialLoginType, code);  // 서비스에서 사용자 정보 받아오기
 
         if (user != null) {
             log.info(">> 사용자 정보 DB 저장 완료 :: {}", user.getName());
-
-            // 세션에 사용자 정보 저장
-            session.setAttribute("loginUser", user);
-
-            // 로그인한 유저 정보를 response body로 반환
-            return ResponseEntity.ok(new UserResponse(user.getName(), user.getAccessToken(), user.getProvider()));
+            return ResponseEntity.ok("로그인 성공, 사용자 정보 저장 완료");
         } else {
             log.error(">> 사용자 정보 저장 실패");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("사용자 정보 저장 실패");
+            return ResponseEntity.status(500).body("사용자 정보 저장 실패");
         }
     }
 
